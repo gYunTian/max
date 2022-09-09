@@ -47,7 +47,6 @@ import torch
 from torch import nn
 from torch.utils.checkpoint import checkpoint
 
-from timm.data import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
 from .helpers import build_model_with_cfg, checkpoint_seq, named_apply
 from .fx_features import register_notrace_function
 from .layers import Mlp, ConvMlp, DropPath, ClassifierHead, trunc_normal_tf_, LayerNorm2d, LayerNorm
@@ -68,85 +67,6 @@ def _cfg(url='', **kwargs):
         'fixed_input_size': True,
         **kwargs
     }
-
-
-default_cfgs = {
-    # Fiddling with configs / defaults / still pretraining
-    'coatnet_pico_rw_224': _cfg(url=''),
-    'coatnet_nano_rw_224': _cfg(
-        url='https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-weights-maxx/coatnet_nano_rw_224_sw-f53093b4.pth',
-        crop_pct=0.9),
-    'coatnet_0_rw_224': _cfg(
-        url='https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-weights-maxx/coatnet_0_rw_224_sw-a6439706.pth'),
-    'coatnet_1_rw_224': _cfg(
-        url='https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-weights-maxx/coatnet_1_rw_224_sw-5cae1ea8.pth'
-    ),
-    'coatnet_2_rw_224': _cfg(url=''),
-    'coatnet_3_rw_224': _cfg(url=''),
-
-    # Highly experimental configs
-    'coatnet_bn_0_rw_224': _cfg(
-        url='https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-weights-maxx/coatnet_bn_0_rw_224_sw-c228e218.pth',
-        mean=IMAGENET_DEFAULT_MEAN, std=IMAGENET_DEFAULT_STD,
-        crop_pct=0.95),
-    'coatnet_rmlp_nano_rw_224': _cfg(
-        url='https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-weights-maxx/coatnet_rmlp_nano_rw_224_sw-bd1d51b3.pth',
-        crop_pct=0.9),
-    'coatnet_rmlp_0_rw_224': _cfg(url=''),
-    'coatnet_rmlp_1_rw_224': _cfg(
-        url='https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-weights-maxx/coatnet_rmlp_1_rw_224_sw-9051e6c3.pth'),
-    'coatnet_rmlp_2_rw_224': _cfg(url=''),
-    'coatnet_rmlp_3_rw_224': _cfg(url=''),
-    'coatnet_nano_cc_224': _cfg(url=''),
-    'coatnext_nano_rw_224': _cfg(url=''),
-
-    # Trying to be like the CoAtNet paper configs
-    'coatnet_0_224': _cfg(url=''),
-    'coatnet_1_224': _cfg(url=''),
-    'coatnet_2_224': _cfg(url=''),
-    'coatnet_3_224': _cfg(url=''),
-    'coatnet_4_224': _cfg(url=''),
-    'coatnet_5_224': _cfg(url=''),
-
-    # Experimental configs
-    'maxvit_pico_rw_256': _cfg(url='', input_size=(3, 256, 256), pool_size=(8, 8)),
-    'maxvit_nano_rw_256': _cfg(
-        url='https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-weights-maxx/maxvit_nano_rw_256_sw-fb127241.pth',
-        input_size=(3, 256, 256), pool_size=(8, 8)),
-    'maxvit_tiny_rw_224': _cfg(
-        url='https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-weights-maxx/maxvit_tiny_rw_224_sw-7d0dffeb.pth'),
-    'maxvit_tiny_rw_256': _cfg(
-        url='',
-        input_size=(3, 256, 256), pool_size=(8, 8)),
-    'maxvit_rmlp_pico_rw_256': _cfg(
-        url='https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-weights-maxx/maxvit_rmlp_pico_rw_256_sw-8d82f2c6.pth',
-        input_size=(3, 256, 256), pool_size=(8, 8)),
-    'maxvit_rmlp_nano_rw_256': _cfg(
-        url='https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-weights-maxx/maxvit_rmlp_nano_rw_256_sw-c17bb0d6.pth',
-        input_size=(3, 256, 256), pool_size=(8, 8)),
-    'maxvit_rmlp_tiny_rw_256': _cfg(
-        url='https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-weights-maxx/maxvit_rmlp_tiny_rw_256_sw-bbef0ff5.pth',
-        input_size=(3, 256, 256), pool_size=(8, 8)),
-    'maxvit_rmlp_small_rw_224': _cfg(
-        url=''),
-    'maxvit_rmlp_small_rw_256': _cfg(
-        url='',
-        input_size=(3, 256, 256), pool_size=(8, 8)),
-
-    'maxvit_tiny_pm_256': _cfg(url='', input_size=(3, 256, 256), pool_size=(8, 8)),
-
-    'maxxvit_nano_rw_256': _cfg(url='', input_size=(3, 256, 256), pool_size=(8, 8)),
-    'maxxvit_tiny_rw_256': _cfg(url='', input_size=(3, 256, 256), pool_size=(8, 8)),
-    'maxxvit_small_rw_256': _cfg(url='', input_size=(3, 256, 256), pool_size=(8, 8)),
-
-    # Trying to be like the MaxViT paper configs
-    'maxvit_tiny_224': _cfg(url=''),
-    'maxvit_small_224': _cfg(url=''),
-    'maxvit_base_224': _cfg(url=''),
-    'maxvit_large_224': _cfg(url=''),
-    'maxvit_xlarge_224': _cfg(url=''),
-}
-
 
 @dataclass
 class MaxxVitTransformerCfg:
